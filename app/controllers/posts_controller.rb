@@ -8,13 +8,39 @@ class PostsController < ApplicationController
   end
   
   def new
+    @post = Post.new
+  end
+
+  def create
+    @post = Post.new(content: params[:content])
+    if @post.save
+      flash[:notice] = "投稿を作成しました"
+      redirect_to("/posts/index")
+    else
+      render("posts/new")
+    end
   end
   
-  def create
-    # フォームから送信されたデータを受け取り、保存する処理を追加してください
-    @post = Post.new(content: params[:content])
-    @post.save  
-    # redirect_toメソッドを用いて、自動的に投稿一覧ページに転送されるようにしてください
-    redirect_to("/posts/index") 
+  def edit
+    @post = Post.find_by(id: params[:id])
   end
+
+  def update
+    @post = Post.find_by(id: params[:id])
+    @post.content = params[:content]
+    if @post.save
+      flash[:notice] = "投稿を編集しました"
+      redirect_to("/posts/index")
+    else
+      render("posts/edit")
+    end    
+  end
+
+  def destroy
+    @post = Post.find_by(id: params[:id])
+    @post.destroy
+    flash[:notice] = "投稿を削除しました"
+    redirect_to("/posts/index")
+  end
+
 end      
